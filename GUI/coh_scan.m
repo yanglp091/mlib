@@ -108,13 +108,15 @@ end
 end
 
 function update_plot(n, data)
-
+%     h=gca;
+%     clf(h);
     time=data.timelist;
     scan_val_list=data.scan_val_list;
     ntime=length(time);
     ref_vals=0.3679*ones(1,ntime);
     coh=data.coh{n};
-    
+
+    plot(time,ref_vals,'k-','LineWidth',1);
     nfields=sum(~structfun(@isempty,coh));
     legend_flag=cell(1,nfields-1);
     for n=1:nfields-1
@@ -124,7 +126,7 @@ function update_plot(n, data)
         line(time,abs(coh.(field_name)),'LineStyle','-','LineWidth',2,'Marker','*','MarkerSize',4,'Color',colorval);
         legend_flag{n}=strcat('coherence-cce-',num2str(n));
     end
-    line(time,ref_vals,'LineStyle','-','LineWidth',1,'Color',[0,0,0]);
+
     xlabel('Time');
     ylabel('Coherence');
     xlim([0,time(end)]);
