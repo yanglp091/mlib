@@ -1,6 +1,9 @@
 %if 0
 %% set path
-addpath(genpath('./'));
+clear;
+addpath(genpath('/Users/ylp/Documents/code/mlib'));
+addpath(genpath('/Users/ylp/Documents/projects/BN_layer'));
+cd /Users/ylp/Documents/projects/BN_layer;
 
 %% set conditions
 fprintf('setting conditions...\n');
