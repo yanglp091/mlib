@@ -702,7 +702,7 @@ end
 % end
 function fill_cluster_info_table( clu_idx,handles)
     cluster=handles.pr.spin_bath.cluster_info.clusters{clu_idx};
-    spin_idx=find(handles.pr.spin_bath.cluster_matrix(clu_idx,:));
+    spin_idx=cluster.cluster_info.members;
     handles.cluster_info_table.Data=cell(6,4);
     
     lf_para.central_spin=handles.pr.central_spin;
