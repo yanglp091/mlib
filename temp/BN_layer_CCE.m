@@ -8,8 +8,8 @@ cd /Users/ylp/Documents/projects/BN_layer;
 %% set conditions
 fprintf('setting conditions...\n');
 b=806;
-filename1=['./input_output/BN_20150514_' num2str(b) 'G.mat'];
-filename2=['./input_output/coh_20150514_' num2str(b) 'G.mat'];
+filename1=['./output/DataTotal_20150514_' num2str(b) 'G.mat'];
+filename2=['./output/DataCoh_20150514_' num2str(b) 'G.mat'];
 conditions=phy.condition.LabCondition();
 conditions.magnetic_field.polar_vector=[b*1e-4,0,0];%[B,theta,phi]e.g. [3e-1,0.955317,pi/4] for NV
 conditions.reference_frequency=2*pi*2.87e9;%2.87e9
@@ -41,7 +41,7 @@ disp('Creating central spin pure dephasing model...');
 pr=phy.model.CCEengine(cspin,conditions,'SpinCollection',bath_spins);
 %% generate clusters
 disp('generating clusters of spin-system...');
-cutoff=2.6;maxorder=3;
+cutoff=2.6;maxorder=2;
 approx='ESR';%'SzSz'
 pr.spin_bath.clustering(cutoff, maxorder,approx);
 pr.set_clusters();
@@ -72,14 +72,14 @@ coh=pr.coherence;
 coh.timelist=pr.timelist;
 save(filename2,'coh')
 
-end
+% end
 %%
-if 0
-figure();
-plot(pr.timelist,real(pr.coherence.coherence_cce_1),'r-o',pr.timelist,real(pr.coherence.coherence_cce_2),'b-*'...
-   ,pr.timelist,real(pr.coherence.coherence_cce_3));%,'c-d',pr.timelist,real(pr.coherence.coherence_cce_4),'k-+'
-ylim([0,1]);
-%end
+% % if 0
+% figure();
+% plot(pr.timelist,real(pr.coherence.coherence_cce_1),'r-o',pr.timelist,real(pr.coherence.coherence_cce_2),'b-*'...
+%    ,pr.timelist,real(pr.coherence.coherence_cce_3));%,'c-d',pr.timelist,real(pr.coherence.coherence_cce_4),'k-+'
+% ylim([0,1]);
+% %end
 
 
 

@@ -6,7 +6,7 @@ obj.maxorder=order_cut;
 mode=obj.clustering_method;
 cluster_list=eye(obj.nEntries);
 for n=1:(obj.maxorder-1)
-    fprintf('generating clusters of order n=%d ...\n', n);
+    fprintf('generating clusters of order n=%d ...\n', n+1);
     neighbor_matrix=logical(cluster_list*obj.conmatrix); neighbor_matrix(logical(cluster_list))=0;
     new_cluster_list_size=nnz(neighbor_matrix)+nnz(sum(neighbor_matrix,2)==0);
     new_cluster_list=zeros(new_cluster_list_size,obj.nEntries);%,new_cluster_list_size*(n+1)
