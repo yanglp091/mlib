@@ -1,7 +1,7 @@
-function coh = cluster_coherence(obj,cluster_index,para,approx)
+function coh = cluster_coherence(obj,clu_idx,para,approx)
 %CLUSTER_EVOLUTION e
-     cluster=obj.get_cluster(cluster_index); 
-     lf_para.central_spin=obj.central_spin;%local field parameters
+    cluster=obj.get_cluster(clu_idx);
+    lf_para.central_spin=obj.central_spin;%local field parameters
     %calculate the conditional cluster Hamiltonian
     lf_para.state=para.state1;
     cluster.set_bath_local_field('parameters',lf_para,'approx',approx);
@@ -47,4 +47,5 @@ function coh = cluster_coherence(obj,cluster_index,para,approx)
    end
 %    cluster.HilbertSpace.scalars.coherence=coh;    
 end
+
 

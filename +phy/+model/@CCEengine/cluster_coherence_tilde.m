@@ -11,7 +11,8 @@ function [ coh_tilde ] = cluster_coherence_tilde(obj,cluster_index,para,approx )
          coh_tilde=coh;
          for m=1:len_subclus
             sub_cluster_idx=subclusters(m);
-            coh_tilde_sub=obj.cluster_coherence_tilde(sub_cluster_idx,para,approx);
+            cluster=obj.get_cluster(sub_cluster_idx);
+            coh_tilde_sub=obj.cluster_coherence_tilde(cluster,para,approx);
             coh_tilde=coh_tilde./coh_tilde_sub;
         end
     end

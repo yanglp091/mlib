@@ -1,32 +1,32 @@
-%if 0
+% clc;
+% clear;
+% tic;
+% if 0
 %% set path
 clear;
-addpath(genpath('/Users/ylp/Documents/code/mlib'));
-addpath(genpath('/Users/ylp/Documents/projects/BN_layer'));
-cd /Users/ylp/Documents/projects/BN_layer;
-
+addpath(genpath('/home/csrc/code_svn/mlib/'));
+addpath(genpath('/home/csrc/projects/BN_layer'));
+cd /home/csrc/code_svn/mlib/;
 %% set conditions
 fprintf('setting conditions...\n');
-b=806;
-filename1=['./output/DataTotal_20150514_' num2str(b) 'G.mat'];
-filename2=['./output/DataCoh_20150514_' num2str(b) 'G.mat'];
+
 conditions=phy.condition.LabCondition();
-conditions.magnetic_field.polar_vector=[b*1e-4,0,0];%[B,theta,phi]e.g. [3e-1,0.955317,pi/4] for NV
+conditions.magnetic_field.polar_vector=[0.806,0,0];%[B,theta,phi]e.g. [3e-1,0.955317,pi/4] for NV
 conditions.reference_frequency=2*pi*2.87e9;%2.87e9
 conditions.reference_direction.theta=0;%the polarization of the central spin 0.955317 for NV
 conditions.reference_direction.phi=0;% pi/4 for NV
 %% center spin
 disp('creating a center spin...');
-cspin=phy.stuff.Spin('NV',[0,0,40]);%'NV', [0 0 0]
+cspin=phy.stuff.Spin('NV',[0,0,30]);%'NV', [0 0 0]
 
 %% lattice parameters 
 tic;
-nmax=5;seed=1;
+nmax=10;seed=1;
 latt_para.name='BN';nspin=400;
-latt_para.idx_range=[-nmax, nmax; -nmax, nmax; -nmax, 0];
-latt_para.abundance=[0.199, 0.004];%[abundance_B11, abundance_N15]
+latt_para.idx_range=[-nmax, nmax; -nmax, nmax; -0, 0];
+latt_para.abundance=[0.0, 0.004];%[abundance_B11, abundance_N15] =[0.199, 0.004]
 latt_para.seed=[seed,seed+1];%[seed_B11, seed_N15]  these two seed must be set as different integers
-latt_para.layers=[-1,0];
+latt_para.layers=0;
 latt_para.take=1:nspin;
 bath_spins=phy.stuff.SpinCollection_BN(latt_para);
 bath_spins.take_sub_collection(latt_para.take);
@@ -41,23 +41,33 @@ disp('Creating central spin pure dephasing model...');
 pr=phy.model.CCEengine(cspin,conditions,'SpinCollection',bath_spins);
 %% generate clusters
 disp('generating clusters of spin-system...');
-cutoff=2.6;maxorder=2;
+cutoff=2.6;maxorder=4;
 approx='ESR';%'SzSz'
 pr.spin_bath.clustering(cutoff, maxorder,approx);
+toc
+tic
 pr.set_clusters();
 pr.set_cluster_lab_condition(conditions);
-pack;
 toc
+%if 0
 %% cluster evolution
-tic;
+
+
+tic
 disp('calculating cluster and total coherence...');
-coh_para.state1=1;
-coh_para.state2=3;
-coh_para.tmax=5*10^(-4);
+coh_para.state1=3;
+coh_para.state2=1;
+coh_para.tmax=5*10^(-3);
 coh_para.ntime=101;
 coh_para.npulse=1;
-pr.coherence_evolution(coh_para);
+coh_mat=pr.coherence_evolution(coh_para);%the matrix of the coherence of all cluster
+toc
+
+tic
+pr.coherence_CCE(coh_mat);
+toc
 disp('calculation of coherence finished.');
+% if 0
 %% %%%%%parameter for analyze panel%%%%%%%%%%%%%
 para_data.conditions=conditions;
 para_data.cspin=cspin;
@@ -67,39 +77,24 @@ para_data.approx=approx;
 para_data.coh_para=coh_para;
 toc;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cd /home/csrc/projects/BN_layer;
+filename1='./output/DataTotal_test3.mat';
+filename2='./output/DataCoh_test3.mat';
 save('-v7.3',filename1,'pr','para_data');
 coh=pr.coherence;
 coh.timelist=pr.timelist;
 save(filename2,'coh')
+restoredefaultpath
 
-% end
+%end
 %%
-% % if 0
-% figure();
-% plot(pr.timelist,real(pr.coherence.coherence_cce_1),'r-o',pr.timelist,real(pr.coherence.coherence_cce_2),'b-*'...
-%    ,pr.timelist,real(pr.coherence.coherence_cce_3));%,'c-d',pr.timelist,real(pr.coherence.coherence_cce_4),'k-+'
-% ylim([0,1]);
-% %end
-
-
-
-
-%% plot coherence
 if 0
 figure();
-plot(coh.timelist,real(coh.coherence_cce_1),'r-o',coh.timelist,real(coh.coherence_cce_2),'b-*'...
-   ,coh.timelist,real(coh.coherence_cce_3),'c-d');%,pr.timelist,real(pr.coherence.coherence_cce_4),'k-+'
-ylim([0,1]);
-xlim([0,5e-4]);
-xlabel('Time (s)','FontSize',24);%,'position',[180,-80,1]
-ylabel('Hahn Echo','FontSize',24);
-box on;
-title('B=1472G d=4nm','FontSize',24);
-h=legend('CCE-1','CCE-2','CCE-3');
-set(h,'position',[0.6,0.5,0.22,0.2]);
-set(h,'FontSize',20, 'interpreter','latex')
-set(h,'Box','off');
+plot(pr.timelist,real(pr.coherence.coherence_cce_1),'r-o',pr.timelist,real(pr.coherence.coherence_cce_2),'b-*');%...
+%    ,pr.timelist,real(pr.coherence.coherence_cce_3),'c-d',pr.timelist,real(pr.coherence.coherence_cce_3),'k-+' );%
+ylim([0,10]);
 end
+
 %% pair resonance
 % b=1469;
 % % coh=struct();

@@ -6,7 +6,7 @@ function set_clusters(obj)
     nc=obj.spin_bath.cluster_info.nclusters;
     for m=1:nc
        cluster=obj.get_cluster(m);
-       cluster.cluster_info.subclusters=find(obj.spin_bath.xmm(:,m))';
+       cluster.cluster_info.subclusters=find(obj.spin_bath.xmm(m,:));
        cluster.cluster_info.members=find(obj.spin_bath.cluster_matrix(m,:));
     end
     obj.spin_bath.conmatrix=0;
